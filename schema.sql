@@ -1,0 +1,40 @@
+CREATE TABLE IF NOT EXISTS users (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  username TEXT NOT NULL UNIQUE,
+  password_hash TEXT NOT NULL,
+  password_salt TEXT NOT NULL,
+  nombre_completo TEXT NOT NULL,
+  rol_familiar TEXT,
+  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE TABLE IF NOT EXISTS sorteos (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  fecha_ciclo TEXT NOT NULL UNIQUE,
+  ganador_user_id INTEGER NOT NULL,
+  numero_elegido INTEGER NOT NULL,
+  total_usuarios INTEGER NOT NULL,
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  FOREIGN KEY (ganador_user_id) REFERENCES users(id)
+);
+
+CREATE TABLE IF NOT EXISTS mensajes (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  sorteo_id INTEGER NOT NULL UNIQUE,
+  user_id INTEGER NOT NULL,
+  categoria TEXT NOT NULL CHECK (categoria IN ('historia', 'recuerdo', 'consejo')),
+  texto TEXT NOT NULL,
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  FOREIGN KEY (sorteo_id) REFERENCES sorteos(id),
+  FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+CREATE TABLE IF NOT EXISTS push_subscriptions (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id INTEGER NOT NULL,
+  endpoint TEXT NOT NULL UNIQUE,
+  p256dh TEXT NOT NULL,
+  auth TEXT NOT NULL,
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  FOREIGN KEY (user_id) REFERENCES users(id)
+);
