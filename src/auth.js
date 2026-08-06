@@ -2,13 +2,16 @@ import { json, error, hashPassword, verifyPassword, firmarToken } from './utils.
 
 export async function registrar(request, env, origin) {
   const body = await request.json().catch(() => ({}));
-  const { username, password, password2, nombre, familia } = body;
+  const { username, password, password2, nombre, familia, fechaNacimiento } = body;
 
   if (!username || !password || !nombre) {
     return error('Rellena al menos usuario, contraseña y nombre.', 400, origin);
   }
   if (password !== password2) {
     return error('Las contraseñas no coinciden.', 400, origin);
+  }
+  if (fechaNacimiento && !/^\d{4}-\d{2}-\d{2}$/.test(fechaNacimiento)) {
+    return error('La fecha de nacimiento no es válida.', 400, origin);
   }
 
   const existente = await env.DB
@@ -23,9 +26,9 @@ export async function registrar(request, env, origin) {
   const { hash, salt } = await hashPassword(password);
 
   await env.DB.prepare(
-    `INSERT INTO users (username, password_hash, password_salt, nombre_completo, rol_familiar)
-     VALUES (?, ?, ?, ?, ?)`
-  ).bind(username.toLowerCase(), hash, salt, nombre, familia || null).run();
+    `INSERT INTO users (username, password_hash, password_salt, nombre_completo, rol_familiar, fecha_nacimiento)
+     VALUES (?, ?, ?, ?, ?, ?)`
+  ).bind(username.toLowerCase(), hash, salt, nombre, familia || null, fechaNacimiento || null).run();
 
   return json({ ok: true }, { status: 201 }, origin);
 }
