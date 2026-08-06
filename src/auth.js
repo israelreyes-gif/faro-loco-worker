@@ -2,7 +2,7 @@ import { json, error, hashPassword, verifyPassword, firmarToken } from './utils.
 
 export async function registrar(request, env, origin) {
   const body = await request.json().catch(() => ({}));
-  const { username, password, password2, nombre, familia, fechaNacimiento } = body;
+  const { username, password, password2, nombre, fechaNacimiento } = body;
 
   if (!username || !password || !nombre) {
     return error('Rellena al menos usuario, contraseña y nombre.', 400, origin);
@@ -26,9 +26,9 @@ export async function registrar(request, env, origin) {
   const { hash, salt } = await hashPassword(password);
 
   await env.DB.prepare(
-    `INSERT INTO users (username, password_hash, password_salt, nombre_completo, rol_familiar, fecha_nacimiento)
-     VALUES (?, ?, ?, ?, ?, ?)`
-  ).bind(username.toLowerCase(), hash, salt, nombre, familia || null, fechaNacimiento || null).run();
+    `INSERT INTO users (username, password_hash, password_salt, nombre_completo, fecha_nacimiento)
+     VALUES (?, ?, ?, ?, ?)`
+  ).bind(username.toLowerCase(), hash, salt, nombre, fechaNacimiento || null).run();
 
   return json({ ok: true }, { status: 201 }, origin);
 }
@@ -56,6 +56,6 @@ export async function login(request, env, origin) {
 
   return json({
     token,
-    user: { id: user.id, nombre: user.nombre_completo, familia: user.rol_familiar }
+    user: { id: user.id, nombre: user.nombre_completo }
   }, {}, origin);
 }
