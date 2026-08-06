@@ -22,13 +22,13 @@ export async function getEstado(request, env, origin) {
     .prepare('SELECT COUNT(*) AS n FROM users').first())?.n ?? 0;
 
   const sorteo = await env.DB
-    .prepare(`SELECT s.*, u.nombre_completo, u.rol_familiar
+    .prepare(`SELECT s.*, u.nombre_completo
               FROM sorteos s JOIN users u ON u.id = s.ganador_user_id
               WHERE s.fecha_ciclo = ?`)
     .bind(ciclo).first();
 
   const mensajeRow = sorteo ? await env.DB
-    .prepare(`SELECT m.*, u.nombre_completo, u.rol_familiar
+    .prepare(`SELECT m.*, u.nombre_completo
               FROM mensajes m JOIN users u ON u.id = m.user_id
               WHERE m.sorteo_id = ?`)
     .bind(sorteo.id).first() : null;
@@ -38,13 +38,12 @@ export async function getEstado(request, env, origin) {
   const respuesta = { fase, totalUsuarios };
 
   if (sorteo) {
-    respuesta.ganador = { id: sorteo.ganador_user_id, nombre: sorteo.nombre_completo, familia: sorteo.rol_familiar };
+    respuesta.ganador = { id: sorteo.ganador_user_id, nombre: sorteo.nombre_completo };
     respuesta.numeroElegido = sorteo.numero_elegido;
   }
   if (mensajeRow) {
     respuesta.mensaje = {
       nombre: mensajeRow.nombre_completo,
-      familia: mensajeRow.rol_familiar,
       categoria: mensajeRow.categoria,
       texto: mensajeRow.texto
     };
