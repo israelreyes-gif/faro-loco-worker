@@ -79,6 +79,7 @@ export async function ejecutarTareaProgramada(env) {
   const ciclo = cicloActual();
 
   if (hm === T_CUMPLE) await avisarCumpleanos(env);
+  if (hm === T_GIRANDO) await avisarDadoGirando(env);
   if (hm === T_ELEGIDO) await elegirGanador(env, ciclo);
   if (hm === T_ESCRIBIENDO) await avisarInicioEscritura(env, ciclo);
   if (hm === T_CIERRE) await avisarSiSinMensaje(env, ciclo);
@@ -98,6 +99,13 @@ async function avisarCumpleanos(env) {
       body: `Hoy es el cumpleaños de ${persona.nombre_completo}. 🎉`
     });
   }
+}
+
+async function avisarDadoGirando(env) {
+  await enviarATodos(env, {
+    title: 'FARO',
+    body: 'El faro está eligiendo a alguien esta noche.'
+  });
 }
 
 async function elegirGanador(env, ciclo) {
