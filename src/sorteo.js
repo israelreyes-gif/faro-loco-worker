@@ -10,6 +10,8 @@ const T_CIERRE = 23 * 60;       // 23:00 -> se cierra la ventana
 
 // ---------------------------------------------------------------
 // GET /api/estado — llamado por el frontend cada pocos segundos
+// Nota: nunca se envía el nombre del agraciado ni del autor del
+// mensaje — el faro es anónimo. Solo se envía el número del dado.
 // ---------------------------------------------------------------
 export async function getEstado(request, env, origin) {
   const usuario = await usuarioDesdePeticion(request, env);
@@ -22,15 +24,11 @@ export async function getEstado(request, env, origin) {
     .prepare('SELECT COUNT(*) AS n FROM users').first())?.n ?? 0;
 
   const sorteo = await env.DB
-    .prepare(`SELECT s.*, u.nombre_completo
-              FROM sorteos s JOIN users u ON u.id = s.ganador_user_id
-              WHERE s.fecha_ciclo = ?`)
+    .prepare('SELECT * FROM sorteos WHERE fecha_ciclo = ?')
     .bind(ciclo).first();
 
   const mensajeRow = sorteo ? await env.DB
-    .prepare(`SELECT m.*, u.nombre_completo
-              FROM mensajes m JOIN users u ON u.id = m.user_id
-              WHERE m.sorteo_id = ?`)
+    .prepare('SELECT * FROM mensajes WHERE sorteo_id = ?')
     .bind(sorteo.id).first() : null;
 
   const fase = calcularFase(hm, sorteo, mensajeRow);
@@ -38,12 +36,11 @@ export async function getEstado(request, env, origin) {
   const respuesta = { fase, totalUsuarios };
 
   if (sorteo) {
-    respuesta.ganador = { id: sorteo.ganador_user_id, nombre: sorteo.nombre_completo };
+    respuesta.ganador = { id: sorteo.ganador_user_id };
     respuesta.numeroElegido = sorteo.numero_elegido;
   }
   if (mensajeRow) {
     respuesta.mensaje = {
-      nombre: mensajeRow.nombre_completo,
       categoria: mensajeRow.categoria,
       texto: mensajeRow.texto
     };
