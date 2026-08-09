@@ -2,6 +2,7 @@ name = "faro-loco-worker"
 main = "src/index.js"
 compatibility_date = "2026-08-01"
 compatibility_flags = ["nodejs_compat"]
+# forzar redeploy
 
 [triggers]
 crons = ["*/5 * * * *"]
