@@ -1,4 +1,4 @@
-name = "faro-worker"
+name = "faro-loco-worker"
 main = "src/index.js"
 compatibility_date = "2026-08-01"
 compatibility_flags = ["nodejs_compat"]
@@ -8,8 +8,8 @@ crons = ["*/5 * * * *"]
 
 [[d1_databases]]
 binding = "DB"
-database_name = "faro-db"
-database_id = "b6a5670c-e3dd-4565-a4d8-bf290ef47d56"
+database_name = "faro-loco-db"
+database_id = "bed57745-7ad6-40a1-aefe-fda4e5f2e313"
 
 [vars]
 VAPID_SUBJECT = "mailto:israel.reyes@gmail.com"
