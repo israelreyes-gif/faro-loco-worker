@@ -2,6 +2,7 @@ import { json, error, cicloActual, usuarioDesdePeticion } from './utils.js';
 import { enviarATodos } from './push.js';
 
 const CATEGORIAS_VALIDAS = ['historia', 'recuerdo', 'consejo'];
+const TEXTO_MAX_LENGTH = 500;
 
 export async function postMensaje(request, env, origin) {
   const usuario = await usuarioDesdePeticion(request, env);
@@ -12,16 +13,19 @@ export async function postMensaje(request, env, origin) {
     return error('Categoría no válida.', 400, origin);
   }
   if (!texto || !texto.trim()) {
-    return error('Escribe algo antes de encender el faro.', 400, origin);
+    return error('Escribe algo antes de encender el faro loco.', 400, origin);
+  }
+  if (texto.trim().length > TEXTO_MAX_LENGTH) {
+    return error(`Resume un poco, no puede pasar de ${TEXTO_MAX_LENGTH} caracteres.`, 400, origin);
   }
 
   const ciclo = cicloActual();
   const sorteo = await env.DB
     .prepare('SELECT * FROM sorteos WHERE fecha_ciclo = ?').bind(ciclo).first();
 
-  if (!sorteo) return error('Esta noche el faro aún no ha elegido a nadie.', 400, origin);
+  if (!sorteo) return error('Esta noche el faro loco aún no ha elegido a nadie.', 400, origin);
   if (sorteo.ganador_user_id !== usuario.id) {
-    return error('Esta noche el faro no te ha iluminado a ti.', 403, origin);
+    return error('Esta noche el faro loco no te ha iluminado a ti.', 403, origin);
   }
 
   const yaEscrito = await env.DB
@@ -33,8 +37,8 @@ export async function postMensaje(request, env, origin) {
   ).bind(sorteo.id, usuario.id, categoria, texto.trim()).run();
 
   await enviarATodos(env, {
-    title: 'FARO',
-    body: 'El faro ha hablado esta noche. Ven a leerlo.'
+    title: 'FARO LOCO',
+    body: 'El faro loco no se ha callado esta noche. Ven a leerlo.'
   });
 
   return json({ ok: true }, { status: 201 }, origin);
