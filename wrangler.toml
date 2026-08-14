@@ -13,3 +13,13 @@ database_id = "bed57745-7ad6-40a1-aefe-fda4e5f2e313"
 
 [vars]
 VAPID_SUBJECT = "mailto:israel.reyes@gmail.com"
+
+[observability]
+enabled = true
+head_sampling_rate = 1
+
+[observability.logs]
+enabled = true
+invocation_logs = true
+persist = true
+head_sampling_rate = 1
