@@ -178,16 +178,16 @@ async function avisarCumpleanos(env) {
 
   for (const persona of cumples.results) {
     await enviarATodos(env, {
-      title: 'FARO',
-      body: `Hoy es el cumpleaños de ${persona.nombre_completo}. 🎉`
+      title: 'FARO LOCO',
+      body: `¡Hoy cumple años ${persona.nombre_completo}! 🎉 A brindar.`
     });
   }
 }
 
 async function avisarDadoGirando(env) {
   await enviarATodos(env, {
-    title: 'FARO',
-    body: 'El faro está eligiendo a alguien esta noche.'
+    title: 'FARO LOCO',
+    body: 'Redoble de tambores... el faro loco está eligiendo a alguien.'
   });
 }
 
@@ -209,8 +209,8 @@ async function elegirGanador(env, ciclo) {
   ).bind(ciclo, ganadorId, indice + 1, ids.length).run();
 
   await enviarAUsuario(env, ganadorId, {
-    title: 'FARO',
-    body: 'Esta noche, el faro te ha iluminado.'
+    title: 'FARO LOCO',
+    body: '¡Esta noche te ha tocado a ti, campeón!'
   });
 }
 
@@ -220,8 +220,8 @@ async function avisarInicioEscritura(env, ciclo) {
   if (!sorteo) return;
 
   await enviarAUsuario(env, sorteo.ganador_user_id, {
-    title: 'FARO',
-    body: 'Tienes 1 hora para escribir lo que quieras dejar esta noche.'
+    title: 'FARO LOCO',
+    body: 'Tienes 1 hora para soltar lo que te dé la gana a los demás.'
   });
 }
 
@@ -235,8 +235,8 @@ async function avisarSiSinMensaje(env, ciclo) {
   if (mensaje) return; // ya se difundió al enviarlo, ver src/mensajes.js
 
   await enviarATodos(env, {
-    title: 'FARO',
-    body: 'El faro se apagó esta noche sin dejar ningún mensaje.'
+    title: 'FARO LOCO',
+    body: 'El faro loco se apagó esta noche sin soltar ni una palabra.'
   });
 }
 
